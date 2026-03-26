@@ -1,42 +1,44 @@
 import os
-import streamlit as st
 
-# ==============================
-# Base Directory
-# ==============================
-BASE_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")
-)
+# ==========================
+# BASE DIRECTORIES
+# ==========================
+# This ensures paths work both locally and in containers
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
-# ==============================
-# Paths
-# ==============================
-JSON_PATH = os.path.join(BASE_DIR, "data", "clean", "visa_policy.json")
-VECTOR_DB_PATH = os.path.join(BASE_DIR, "Output", "Visa_vector_db")
-LOG_PATH = os.path.join(BASE_DIR, "logs", "decision_logs.jsonl")
+# ==========================
+# JSON POLICY DATA
+# ==========================
+JSON_PATH = os.path.join(DATA_DIR, "policy_data.json")
 
-# ==============================
-# Model Settings
-# ==============================
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-TOP_K = 3
+# ==========================
+# VECTOR DB / FAISS INDEX
+# ==========================
+# Folder containing index.faiss and index.pkl
+VECTOR_DB_PATH = os.path.join(DATA_DIR, "faiss_index")
 
-# Gemini (google-genai SDK)
+# ==========================
+# EMBEDDING MODEL
+# ==========================
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"  # change as needed
 
+# ==========================
+# Retrieval Settings
+# ==========================
+TOP_K = 3  # number of top results to fetch
+
+# ==========================
+# LOGGING
+# ==========================
+LOG_PATH = os.path.join(BASE_DIR, "logs", "eligibility_logs.jsonl")
+
+# ==========================
+# GOOGLE API KEY
+# ==========================
+# Fetch from environment variables for security
 def get_google_api_key():
-
-    # 1️⃣ Env variable
-    key = os.getenv("GOOGLE_API_KEY")
-    if key:
-        return key
-
-    # 2️⃣ Streamlit secrets
-    try:
-        return st.secrets["GOOGLE_API_KEY"]
-    except:
-        pass
-
-    return None
-
-
-
+    key = os.environ.get("GOOGLE_API_KEY")
+    if not key:
+        print("[WARN] GOOGLE_API_KEY not found in environment variables.")
+    return key
