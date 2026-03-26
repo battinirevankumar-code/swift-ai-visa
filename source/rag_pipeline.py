@@ -1,5 +1,3 @@
-# rag_pipeline.py (Production-Ready Optimized Version)
-
 import json
 import time
 import re
@@ -7,10 +5,9 @@ import random
 import os
 from google import genai
 
-from retriever import retrieve_policy
+from retriever import retrieve_policy, VECTORSTORE
 from eligibility_prompt import build_eligibility_prompt
 from config import get_google_api_key, LOG_PATH
-
 
 # ==========================
 # CONFIG
@@ -19,9 +16,8 @@ PRIMARY_MODEL = "gemini-2.5-flash"
 FALLBACK_MODEL = "gemini-2.0-flash"
 MAX_RETRIES = 3
 
-# ✅ FIX: Load API key properly
+# Load API key
 GOOGLE_API_KEY = get_google_api_key()
-
 
 # ==========================
 # CLIENT
@@ -31,13 +27,11 @@ def get_client():
         raise ValueError("Missing GOOGLE_API_KEY")
     return genai.Client(api_key=GOOGLE_API_KEY)
 
-
 # ==========================
-# LOGGING (IMPORTANT FIX)
+# LOGGING
 # ==========================
 def log_decision(result: dict):
     """Append evaluation result safely to log file."""
-
     try:
         log_dir = os.path.dirname(LOG_PATH)
         if log_dir:
@@ -64,7 +58,6 @@ def log_decision(result: dict):
     except Exception as e:
         print("Logging Error:", e)
 
-
 # ==========================
 # CONFIDENCE
 # ==========================
@@ -74,12 +67,10 @@ def compute_final_confidence(retrieval_conf, llm_conf):
         llm_conf = float(llm_conf)
     except:
         return 60.0
-
     return round((0.6 * retrieval_conf) + (0.4 * llm_conf), 2)
 
-
 # ==========================
-# JSON EXTRACTION (STRONG)
+# JSON EXTRACTION
 # ==========================
 def extract_json(text):
     if not text:
@@ -100,7 +91,6 @@ def extract_json(text):
             return None
 
     return None
-
 
 # ==========================
 # MOCK FALLBACK
@@ -123,9 +113,8 @@ def mock_result(user_profile):
         }
     }
 
-
 # ==========================
-# LLM CALL
+# LLM CALL WITH RETRY
 # ==========================
 def call_llm_with_retry(prompt):
     client = get_client()
@@ -139,14 +128,10 @@ def call_llm_with_retry(prompt):
                     model=model,
                     contents=prompt
                 )
-
                 text = getattr(response, "text", None)
-
                 if not text:
                     raise ValueError("Empty response")
-
                 return text, model
-
             except Exception as e:
                 last_error = str(e)
                 wait = (2 ** attempt) + random.uniform(0, 1)
@@ -154,37 +139,29 @@ def call_llm_with_retry(prompt):
 
     return None, last_error
 
-
 # ==========================
 # DECISION NORMALIZATION
 # ==========================
 def normalize_decision(decision):
     if not decision:
         return "REVIEW"
-
     mapping = {
         "ELIGIBLE": "APPROVED",
         "PARTIALLY_ELIGIBLE": "REVIEW",
         "NOT_ELIGIBLE": "REJECTED"
     }
-
     return mapping.get(str(decision).upper(), "REVIEW")
-
 
 # ==========================
 # DOCUMENT EXTRACTION
 # ==========================
 def extract_user_documents(profile):
     docs = []
-
     visa_q = profile.get("Visa Details", {}).get("Visa Questions", {})
-
     for k, v in visa_q.items():
         if str(v).lower() in ["yes", "provided", "available"]:
             docs.append(k.replace("_", " "))
-
     return docs
-
 
 # ==========================
 # MAIN PIPELINE
@@ -200,11 +177,17 @@ def evaluate_eligibility(user_profile: dict):
     visa_type = user_profile.get("visa_type", "")
 
     # STEP 1: RETRIEVAL
-    query = f"{destination} {visa_type} visa requirements"
-    retrieval = retrieve_policy(query)
+    try:
+        retrieval = retrieve_policy(f"{destination} {visa_type} visa")
+    except Exception as e:
+        print(f"[WARN] Retrieval failed: {e}")
+        retrieval = None
 
-    if not retrieval or retrieval.get("status") != "success":
-        return {"status": "retrieval_failed"}
+    if not retrieval or retrieval.get("status") not in ["success", "mock_result"]:
+        result = mock_result(user_profile)
+        result["status"] = "retrieval_failed"
+        log_decision(result)
+        return result
 
     retrieval_conf = retrieval.get("confidence", 70)
 
@@ -217,7 +200,6 @@ def evaluate_eligibility(user_profile: dict):
 
     # STEP 4: LLM
     llm_text, model_used = call_llm_with_retry(prompt)
-
     if llm_text is None:
         result = mock_result(user_profile)
         result["status"] = "llm_failed"
@@ -227,7 +209,6 @@ def evaluate_eligibility(user_profile: dict):
 
     # STEP 5: PARSE
     llm_output = extract_json(llm_text)
-
     if llm_output is None:
         result = mock_result(user_profile)
         result["status"] = "parsing_failed"
@@ -258,9 +239,8 @@ def evaluate_eligibility(user_profile: dict):
         "final_confidence": final_conf,
         "latency_ms": latency,
         "eligibility_result": llm_output,
-        "input_profile": full_profile  # ✅ important for logs
+        "input_profile": full_profile
     }
 
     log_decision(result)
-
     return result
