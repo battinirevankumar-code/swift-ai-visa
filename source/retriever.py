@@ -5,18 +5,18 @@ import os
 from rapidfuzz import fuzz
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from config import (
-    JSON_PATH,
-    VECTOR_DB_PATH,
-    EMBEDDING_MODEL,
-    TOP_K,
-)
+from config import JSON_PATH, VECTOR_DB_PATH, EMBEDDING_MODEL, TOP_K
 
 # ==========================
-# Load Policy Data
+# Load Policy Data Safely
 # ==========================
-with open(JSON_PATH, "r", encoding="utf-8") as f:
-    POLICY_DATA = json.load(f)
+if os.path.exists(JSON_PATH):
+    with open(JSON_PATH, "r", encoding="utf-8") as f:
+        POLICY_DATA = json.load(f)
+    print(f"[INFO] Loaded policy JSON from {JSON_PATH}")
+else:
+    POLICY_DATA = {"countries": {}}
+    print(f"[WARN] Policy JSON not found at {JSON_PATH}. Using empty fallback.")
 
 AVAILABLE_COUNTRIES = list(POLICY_DATA.get("countries", {}).keys())
 
@@ -52,7 +52,7 @@ def normalize_key(text: str) -> str:
     return text.lower().replace("_", " ").strip()
 
 def get_visa_types(country: str):
-    visa_types = list(POLICY_DATA["countries"][country].keys())
+    visa_types = list(POLICY_DATA.get("countries", {}).get(country, {}).keys())
     return [v for v in visa_types if v != "official_portal"]
 
 # ==========================
