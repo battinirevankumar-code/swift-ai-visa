@@ -1,11 +1,14 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 
 # ==============================
-# Load .env (LOCAL)
+# Load .env (LOCAL ONLY, SAFE)
 # ==============================
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except:
+    pass
 
 # ==============================
 # Base Directory (ONLY ONCE)
@@ -13,16 +16,11 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ==============================
-# Paths (KEEP ONLY ONE VERSION)
+# Paths
 # ==============================
-JSON_PATH = BASE_DIR / "data" / "clean" / "visa_policy.json"
-VECTOR_DB_PATH = BASE_DIR / "Output" / "Visa_vector_db"
-LOG_PATH = BASE_DIR / "logs" / "decision_logs.jsonl"
-
-# Convert to string (important for some libs)
-JSON_PATH = str(JSON_PATH)
-VECTOR_DB_PATH = str(VECTOR_DB_PATH)
-LOG_PATH = str(LOG_PATH)
+JSON_PATH = str(BASE_DIR / "data" / "clean" / "visa_policy.json")
+VECTOR_DB_PATH = str(BASE_DIR / "Output" / "Visa_vector_db")
+LOG_PATH = str(BASE_DIR / "logs" / "decision_logs.jsonl")
 
 # ==============================
 # Model Settings
@@ -31,14 +29,18 @@ EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 TOP_K = 3
 
 # ==============================
-# API KEY HANDLING (BEST PRACTICE)
+# API KEY HANDLING
 # ==============================
 def get_secret(key, default=None):
     try:
         import streamlit as st
-        return st.secrets.get(key, os.getenv(key, default))
+        if key in st.secrets:
+            return st.secrets[key]
     except:
-        return os.getenv(key, default)
-    
+        pass
+
+    return os.getenv(key, default)
+
+
 def get_google_api_key():
     return get_secret("GOOGLE_API_KEY")
