@@ -1,44 +1,44 @@
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 
-# ==========================
-# BASE DIRECTORIES
-# ==========================
-# This ensures paths work both locally and in containers
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
+# ==============================
+# Load .env (LOCAL)
+# ==============================
+load_dotenv()
 
-# ==========================
-# JSON POLICY DATA
-# ==========================
-JSON_PATH = os.path.join(DATA_DIR, "policy_data.json")
+# ==============================
+# Base Directory (ONLY ONCE)
+# ==============================
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ==========================
-# VECTOR DB / FAISS INDEX
-# ==========================
-# Folder containing index.faiss and index.pkl
-VECTOR_DB_PATH = os.path.join(DATA_DIR, "faiss_index")
+# ==============================
+# Paths (KEEP ONLY ONE VERSION)
+# ==============================
+JSON_PATH = BASE_DIR / "data" / "clean" / "visa_policy.json"
+VECTOR_DB_PATH = BASE_DIR / "Output" / "Visa_vector_db"
+LOG_PATH = BASE_DIR / "logs" / "decision_logs.jsonl"
 
-# ==========================
-# EMBEDDING MODEL
-# ==========================
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"  # change as needed
+# Convert to string (important for some libs)
+JSON_PATH = str(JSON_PATH)
+VECTOR_DB_PATH = str(VECTOR_DB_PATH)
+LOG_PATH = str(LOG_PATH)
 
-# ==========================
-# Retrieval Settings
-# ==========================
-TOP_K = 3  # number of top results to fetch
+# ==============================
+# Model Settings
+# ==============================
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+TOP_K = 3
 
-# ==========================
-# LOGGING
-# ==========================
-LOG_PATH = os.path.join(BASE_DIR, "logs", "eligibility_logs.jsonl")
-
-# ==========================
-# GOOGLE API KEY
-# ==========================
-# Fetch from environment variables for security
+# ==============================
+# API KEY HANDLING (BEST PRACTICE)
+# ==============================
+def get_secret(key, default=None):
+    try:
+        import streamlit as st
+        return st.secrets.get(key, os.getenv(key, default))
+    except:
+        return os.getenv(key, default)
+    
 def get_google_api_key():
-    key = os.environ.get("GOOGLE_API_KEY")
-    if not key:
-        print("[WARN] GOOGLE_API_KEY not found in environment variables.")
-    return key
+    return get_secret("GOOGLE_API_KEY")
