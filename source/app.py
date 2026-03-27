@@ -1,4 +1,4 @@
-# app.py
+ # app.py
 import streamlit as st
 import pandas as pd
 import json
@@ -173,7 +173,7 @@ def extract_user_documents(profile):
             docs.add(k.replace("_", " ").lower())
 
     # ---------------------------
-    # 2️⃣ Strong semantic signals 
+    # 2️⃣ Strong semantic signals (NO hardcoding)
     # ---------------------------
 
     # Passport
@@ -939,6 +939,10 @@ elif page == "AI Visa Assistant":
     st.header("🤖 AI Visa Assistant")
     st.info("Ask questions about visa eligibility, required documents, or immigration policy.")
 
+    # ✅ Initialize cache once globally
+    if "llm_cache" not in st.session_state:
+        st.session_state.llm_cache = {}
+
     user_query = st.text_area(
         "Type your question here:",
         placeholder="Example: What documents are required for a USA tourist visa?"
@@ -960,14 +964,18 @@ elif page == "AI Visa Assistant":
             with st.spinner("AI is analyzing visa policies..."):
 
                 try:
-
-                    # Retrieve relevant visa policy using FAISS
+                    # ==========================
+                    # STEP 1: Retrieve Policy
+                    # ==========================
                     retrieved_policy = retrieve_policy(user_query)
 
                     if not retrieved_policy:
-                        st.error("No visa policy context found.")
+                        st.error("❌ No visa policy context found.")
                         st.stop()
 
+                    # ==========================
+                    # STEP 2: Build Prompt
+                    # ==========================
                     prompt = f"""
 You are an experienced immigration consultant helping visa applicants.
 
@@ -1004,20 +1012,38 @@ Write in a user-friendly tone suitable for visa applicants.
 Avoid technical jargon and keep explanations clear.
 """
 
-                    # Call LLM
-                    response = ask_llm(prompt)
+                    # ==========================
+                    # STEP 3: Caching Logic (IMPROVED)
+                    # ==========================
+                    cache_key = prompt  # ✅ Better than user_query
 
+                    if cache_key in st.session_state.llm_cache:
+                        response = st.session_state.llm_cache[cache_key]
+                        st.success("⚡ Loaded from cache (fast response)")
+                    else:
+                        response = ask_llm(prompt)
+                        st.session_state.llm_cache[cache_key] = response
+
+                    # ==========================
+                    # STEP 4: Display Response
+                    # ==========================
                     st.divider()
                     st.markdown("### 🤖 AI Visa Guidance")
 
                     if isinstance(response, dict):
-                        st.markdown(response.get("response", "No response"))
+                        if response.get("status") == "success":
+                            st.markdown(response.get("response", "No response"))
+                            st.caption(
+                                f"Model: {response.get('model_used')} | "
+                                f"Latency: {response.get('latency_ms')} ms"
+                            )
+                        else:
+                            st.error(response.get("response", "Error occurred"))
                     else:
                         st.markdown(response)
 
                 except Exception as e:
-                    st.error(f"AI Error: {e}")
-                    
+                    st.error(f"❌ AI Error: {e}")
 # ===================== ADMIN DASHBOARD =====================
 elif page == "Admin Dashboard":
     st.header("🛠️ Admin Dashboard — Application Logs")
@@ -1121,14 +1147,10 @@ elif page == "Admin Dashboard":
         st.subheader("Export Logs")
 
         filtered_csv = filtered_df.to_csv(index=False)
-        full_csv = df.to_csv(index=False)
+        st.download_button("📥 Download Filtered CSV", filtered_csv, "visa_logs_filtered.csv")
 
-        # ✅ Check if both datasets are same
-        if filtered_df.shape == df.shape and filtered_df.equals(df):
-            st.download_button("📥 Download Logs CSV", full_csv, "visa_logs.csv")
-        else:
-            st.download_button("📥 Download Filtered CSV", filtered_csv, "visa_logs_filtered.csv")
-            st.download_button("📥 Download Full Logs CSV", full_csv, "visa_logs_full.csv")
+        full_csv = df.to_csv(index=False)
+        st.download_button("📥 Download Full Logs CSV", full_csv, "visa_logs_full.csv")
 
         # ---------- Danger Zone ----------
         st.subheader("Danger Zone ⚠️")
