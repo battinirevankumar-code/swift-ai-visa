@@ -20,13 +20,6 @@ To build an AI system that:
 - Provides explainable decision-making  
 - Guides users with missing requirements  
 
----
-
-## 🔗 Project Link
-
-🌐 Live App: https://your-app-link.streamlit.app  
-
----
 
 ## 📂 Project Structure
 
@@ -212,6 +205,14 @@ streamlit run source/app.py
 - 📊 Analytics dashboard
 - 🔐 Authentication system
 - 🧾 PDF report generation
+
+---
+
+## 🔗 Project Link
+
+🌐 Live App: [https://your-app-link.streamlit.app ](https://swift-ai-visa-ufnw5feswxrggmsvjfnx33.streamlit.app/) 
+
+---
 
 ## 👨‍💻 Author
 
