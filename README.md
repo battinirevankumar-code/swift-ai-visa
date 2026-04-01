@@ -28,40 +28,41 @@ To build an AI system that:
 
 ---
 
-## 🏗️ System Architecture
+## 📂 Project Structure
 
+```
 swiftvisa-ai/
 │
 ├── data/
-│ └── clean/
-│ └── visa_policies.json # Structured visa policies dataset
+│   └── clean/
+│       └── visa_policies.json              # Structured visa policies dataset
 │
 ├── logs/
-│ └── decision_logs.jsonl # Application & decision logs
+│   └── decision_logs.jsonl                 # Application & decision logs
 │
 ├── Output/
-│ └── Visa_vector_db/ # ⚠️ Auto-generated FAISS vector database
-│ ├── index.faiss # FAISS index file
-│ └── index.pkl # Metadata / mapping file
+│   └── Visa_vector_db/                     # ⚠️ Auto-generated FAISS vector database
+│       ├── index.faiss                     # FAISS index file
+│       └── index.pkl                       # Metadata / mapping file
 │
 ├── source/
-│ ├── init.py
-│ ├── app.py # Streamlit UI (deployment layer)
-│ ├── build_vector.py # Chunking + embedding + FAISS creation
-│ ├── config.py # Configuration (paths, constants)
-│ ├── eligibility_prompt.py # LLM prompt templates
-│ ├── list_model.py # Model listing / selection
-│ ├── llm_client.py # LLM integration (Gemini API)
-│ ├── log_viewer.py # Admin dashboard (log viewer)
-│ ├── ragpipeline.py # Core RAG pipeline logic
-│ ├── retriever.py # FAISS retrieval system
-│ ├── test_ragpipeline.py # RAG pipeline tests
-│ └── test_retriever.py # Retriever tests
+│   ├── __init__.py
+│   ├── app.py                              # Streamlit UI (deployment layer)
+│   ├── build_vector.py                     # Chunking + embedding + FAISS creation
+│   ├── config.py                           # Configuration (paths, constants)
+│   ├── eligibility_prompt.py               # LLM prompt templates
+│   ├── list_model.py                       # Model listing / selection
+│   ├── llm_client.py                       # LLM integration (Gemini API)
+│   ├── log_viewer.py                       # Admin dashboard (log viewer)
+│   ├── ragpipeline.py                      # Core RAG pipeline logic
+│   ├── retriever.py                        # FAISS retrieval system
+│   ├── test_ragpipeline.py                 # RAG pipeline tests
+│   └── test_retriever.py                   # Retriever tests
 │
-├── requirements.txt # Project dependencies
+├── requirements.txt                        # Project dependencies
 │
 └── README.md
-
+```
 
 
 ---
