@@ -110,6 +110,7 @@ Enables monitoring & debugging
 ```bash
 pip install -r requirements.txt
 streamlit run source/app.py
+```
 
 ## 🔮 Future Enhancements
 
