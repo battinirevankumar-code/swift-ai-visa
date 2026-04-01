@@ -1,5 +1,6 @@
 # SwiftVisa AI – AI-Based Visa Eligibility Screening System
 
+
 SwiftVisa AI is an end-to-end intelligent visa screening system that uses:
 
 📚 Retrieval-Augmented Generation (RAG)
@@ -8,6 +9,7 @@ SwiftVisa AI is an end-to-end intelligent visa screening system that uses:
 🗂 Structured visa policy data
 
 to provide accurate, explainable, and transparent visa eligibility decisions.
+
 
 🚀 Project Objective
 
