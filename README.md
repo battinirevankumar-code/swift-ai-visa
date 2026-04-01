@@ -207,11 +207,11 @@ streamlit run source/app.py
 
 ## 🔮 Future Enhancements
 
-- 📎 Document upload & verification
-- 🌍 Expand visa coverage
-- 📊 Analytics dashboard
-- 🔐 Authentication system
-- 🧾 PDF report generation
+ 📎 Document upload & verification
+ 🌍 Expand visa coverage
+ 📊 Analytics dashboard
+ 🔐 Authentication system
+ 🧾 PDF report generation
 
 ## 👨‍💻 Author
 
