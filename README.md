@@ -219,7 +219,7 @@ streamlit run source/app.py
 
 ## 💡 Key Highlight
 
-- This project demonstrates a complete AI pipeline:
+ This project demonstrates a complete AI pipeline:
 
 - Data engineering (JSON → chunks → embeddings)
 - Vector search (FAISS)
