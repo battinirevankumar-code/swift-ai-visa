@@ -123,7 +123,7 @@ streamlit run source/app.py
 
 ## 👨‍💻 Author
 
-- Revan Kumar Battini
+ Revan Kumar Battini
 
 ## 💡 Key Highlight
 
