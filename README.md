@@ -228,7 +228,7 @@ streamlit run source/app.py
 
 ## 🔗 Project Link
 
-🌐 Live App: [https://your-app-link.streamlit.app ](https://swift-ai-visa-ufnw5feswxrggmsvjfnx33.streamlit.app/) 
+🌐 Live App: [https://app-link.streamlit.app ](https://swift-ai-visa-ufnw5feswxrggmsvjfnx33.streamlit.app/) 
 
 ---
 
