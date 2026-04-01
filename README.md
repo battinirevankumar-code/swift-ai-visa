@@ -65,36 +65,128 @@ swiftvisa-ai/
 ```
 
 
----
-
 ## 🧠 Core Components
 
 ### 🔹 Chunking & Embedding
-Converts visa policies → vector format  
-Enables semantic search  
+Transforms raw visa policy documents into smaller, meaningful text chunks using intelligent splitting strategies (e.g., RecursiveCharacterTextSplitter).  
+Each chunk is then converted into dense vector embeddings using pre-trained transformer models.
 
-### 🔹 FAISS Vector DB
-Stores embeddings  
-Fast similarity search  
-
-### 🔹 Retriever
-Finds relevant visa rules  
-Improves accuracy over keyword search  
-
-### 🔹 RAG Pipeline
-Combines retrieval + LLM  
-Generates context-aware decisions  
-
-### 🔹 LLM Engine
-Produces reasoning  
-Assigns risk & confidence  
-
-### 🔹 Logging System
-Stores all applications  
-Enables monitoring & debugging  
+**Why it matters:**
+- Improves retrieval accuracy  
+- Handles large documents efficiently  
+- Enables semantic understanding instead of keyword matching  
 
 ---
 
+### 🔹 FAISS Vector DB
+A high-performance vector database that stores embeddings and enables fast similarity search using nearest neighbor algorithms.
+
+**Key features:**
+- Optimized for large-scale vector storage  
+- Supports fast Top-K similarity retrieval  
+- Lightweight and efficient for local deployment  
+
+---
+
+### 🔹 Retriever
+Responsible for fetching the most relevant visa policy chunks based on user input.
+
+**How it works:**
+- Converts user query into embeddings  
+- Performs similarity search in FAISS  
+- Returns Top-K most relevant policy contexts  
+
+**Benefits:**
+- Reduces irrelevant data passed to LLM  
+- Improves response precision  
+- Enables context-aware reasoning  
+
+---
+
+### 🔹 RAG Pipeline (Retrieval-Augmented Generation)
+The core intelligence layer that combines retrieved context with LLM reasoning.
+
+**Pipeline flow:**
+1. User input → query generation  
+2. Retrieve relevant policy chunks  
+3. Inject context into LLM prompt  
+4. Generate structured eligibility response  
+
+**Why RAG:**
+- Reduces hallucinations  
+- Grounds responses in real policy data  
+- Improves explainability  
+
+---
+
+### 🔹 LLM Engine
+Handles natural language understanding and decision-making using Gemini API.
+
+**Responsibilities:**
+- Interpret user profile  
+- Apply reasoning on retrieved policies  
+- Generate structured outputs  
+
+**Outputs include:**
+- Eligibility decision (ELIGIBLE / REVIEW / NOT_ELIGIBLE)  
+- Risk level (LOW / MEDIUM / HIGH)  
+- Confidence score (%)  
+- Justification for decision  
+
+---
+
+### 🔹 Rule-Based Validation Layer
+A deterministic validation layer that enforces strict visa rules alongside AI reasoning.
+
+**Examples:**
+- Minimum work experience checks  
+- Age or qualification constraints  
+- Mandatory document validation  
+
+**Purpose:**
+- Ensures consistency and reliability  
+- Prevents incorrect AI assumptions  
+- Adds explainable rule enforcement  
+
+---
+
+### 🔹 Logging System
+Captures every user interaction and system decision in structured format (`JSONL`).
+
+**What is logged:**
+- User profile input  
+- Retrieved contexts  
+- LLM responses  
+- Final decision output  
+
+**Benefits:**
+- Debugging & error tracing  
+- Monitoring system performance  
+- Building admin dashboards  
+
+---
+
+### 🔹 Admin Dashboard (Log Viewer)
+A monitoring interface built using Streamlit to analyze application logs.
+
+**Features:**
+- View all past decisions  
+- Filter by eligibility status  
+- Inspect detailed reasoning  
+- Track system behavior over time  
+
+---
+
+### 🔹 Streamlit Application Layer
+Provides an interactive UI for users to input visa details and receive decisions.
+
+**Capabilities:**
+- Multi-step application flow  
+- Real-time AI responses  
+- Integrated chatbot for queries  
+- Clean and user-friendly interface  
+
+---
 ## ⚙️ Tech Stack
 
 - Frontend: Streamlit  
