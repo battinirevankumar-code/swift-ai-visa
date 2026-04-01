@@ -1,4 +1,3 @@
-
 #✈️ SwiftVisa AI – AI-Based Visa Eligibility Screening System
 
 SwiftVisa AI is an end-to-end intelligent visa screening system that uses:
