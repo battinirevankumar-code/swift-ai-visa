@@ -59,7 +59,7 @@ swiftvisa-ai/
 ├── screenshots/                            # 📸 App UI screenshots (for README/demo)
 │   ├── AI visa Assitant/
 │   ├── Admin Dashboard/
-│   ├── Education and work/..;
+│   ├── Education and work/...
 │   
 ├── source/
 │   ├── __init__.py
