@@ -56,6 +56,14 @@ swiftvisa-ai/
 │       ├── index.faiss                     # FAISS index file
 │       └── index.pkl                       # Metadata / mapping file
 │
+├── screenshots/                            # 📸 App UI screenshots (for README/demo)
+│   ├── AI visa Assitant/
+│   ├── Admin Dashboard/
+│   ├── Education and work/
+│   ├── Financial info/
+│   ├── Personal info/
+│   └── Review and Evaluation/
+│
 ├── source/
 │   ├── __init__.py
 │   ├── app.py                              # Streamlit UI (deployment layer)
