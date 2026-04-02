@@ -59,11 +59,8 @@ swiftvisa-ai/
 ├── screenshots/                            # 📸 App UI screenshots (for README/demo)
 │   ├── AI visa Assitant/
 │   ├── Admin Dashboard/
-│   ├── Education and work/
-│   ├── Financial info/
-│   ├── Personal info/
-│   └── Review and Evaluation/
-│
+│   ├── Education and work/..;
+│   
 ├── source/
 │   ├── __init__.py
 │   ├── app.py                              # Streamlit UI (deployment layer)
